@@ -1,0 +1,9 @@
+http://foo.com
+http://foo.com/a/b/c/
+http://foo.com/foo/a/d/
+http://foo.com/?do=1&not=2&want=3&this=4
+http://foo.com/?do=1&want=3&not=2&this=4
+http://foo.com/#foo
+http://foo.com/#bar
+http://www.FOO.com/bar?utm_source=foo#what
+http://www.TA.com/BUFFOOON#frother
