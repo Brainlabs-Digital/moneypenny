@@ -9,7 +9,3 @@ def export_as_txt(filename, urls):
 	with open(filename, 'w') as f:
 		for line in urls:
 			f.write(line + line_ending)
-
-
-
-
