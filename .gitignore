@@ -1,3 +1,5 @@
 .venv
 *.pyc
+moneypenny.sublime-project
+moneypenny.sublime-workspace
 

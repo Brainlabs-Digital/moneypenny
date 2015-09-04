@@ -1,7 +1,7 @@
 import re
 
 def import_urls_from_text_file(filename, skip_header_row=False):
-	
+	"""Handles the import from a text file where each entry is on a new line.  Outputs a list"""
 	urls = []
 
 	with open(filename, 'r') as input_file:
