@@ -1,6 +1,7 @@
 from helper import dedupe
 from clean_urls import clean_and_strip
 from parse_urls import sub_plus_registered_domain
+from import_helpers import import_urls_from_text_file
 
 
 def sub_plus_reg_from_list(urls, dupes=True):

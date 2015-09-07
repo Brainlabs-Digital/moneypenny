@@ -26,4 +26,3 @@ def import_urls_from_text_file(filename, skip_header_row=False):
 					urls.append(cleaned_line)
 
 	return urls
-

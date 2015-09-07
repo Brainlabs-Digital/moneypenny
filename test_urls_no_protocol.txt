@@ -1,0 +1,12 @@
+foo.com
+foo.com/a/b/c/
+foo.com/foo/a/d/
+foo.com/?do=1&not=2&want=3&this=4
+foo.com/?do=1&want=3&not=2&this=4
+store.foo.com/#foo
+foo.com/#bar
+www.FOO.com/bar?utm_source=foo#what
+www.TA.com/BUFFOOON#frother
+buffoon.ta.com
+buffoon.ta.com/a/b/d
+buffoon.ta.com/?1=do&2=foo
