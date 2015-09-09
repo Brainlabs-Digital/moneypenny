@@ -1,5 +1,5 @@
 from url import parse, URL
-
+from urlparse import urlparse
 
 def prepend_with_protocol(entries):
 	prepended_entries = []
@@ -17,6 +17,8 @@ def clean_and_strip(urls):
 	urls = prepend_with_protocol(urls)
 	for url in urls:
 		url = url.lower()
-		url_obj = parse(url).defrag().abspath().canonical()
-		output.add(url_obj.utf8())
+		url_parts = urlparse(url)
+		if url_parts.netloc:
+			url_obj = parse(url).defrag().abspath().canonical()
+			output.add(url_obj.utf8())
 	return list(output)

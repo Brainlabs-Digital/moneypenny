@@ -1,7 +1,7 @@
 from helper import dedupe
 from clean_urls import clean_and_strip
 from parse_urls import sub_plus_registered_domain
-from import_helpers import import_urls_from_text_file
+from import_helpers import *
 
 
 def sub_plus_reg_from_list(urls, dupes=True):
@@ -33,8 +33,6 @@ def apply_domain_limit(entries, domain_limit):
 	exceeded_domains = set()
 	domains_seen = set()
 	domains_count = dict()
-	domains_disavowed = 0
-	links_disavowed = 0
 	for url in stripped_urls:
 		if url not in domains_seen:
 			domains_seen.add(url)
@@ -44,14 +42,21 @@ def apply_domain_limit(entries, domain_limit):
 
 	for url in stripped_urls:
 		if domains_count[url] >= domain_limit:
-			new_url_set.add('domain: ' + url)
 			exceeded_domains.add(url)
 	
-	domains_disavowed = len(new_url_set)
-
 	for entry in entries:
 		if sub_plus_registered_domain(entry) not in exceeded_domains:
 			new_url_set.add(entry)
-			links_disavowed += 1
 
-	return (list(new_url_set), domains_disavowed, links_disavowed)
+	return (list(new_url_set), list(exceeded_domains))
+
+
+def disavow_from_existing_domains(**entries_dict):
+	urls = clean_and_strip(entries_dict['urls'])
+	domains = sub_plus_reg_from_list(entries_dict['domains'])
+	new_url_set = set()
+	for url in urls:
+		if sub_plus_registered_domain(url) not in domains:
+			new_url_set.add(url)
+	return list(new_url_set)
+
