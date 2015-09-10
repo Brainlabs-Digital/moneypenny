@@ -60,3 +60,19 @@ def disavow_from_existing_domains(**entries_dict):
 			new_url_set.add(url)
 	return list(new_url_set)
 
+
+def disavow_both_ways(disavow_file, list_of_urls):
+	open_file = extract_file_contents(disavow_file)
+	disavow_entries = import_file_contents(open_file)
+	disavow_links = clean_and_strip(disavow_entries['urls'])
+	disavow_domains = disavow_entries['domains']
+	urls = clean_and_strip(list_of_urls)
+	disavowed_urls = []
+	non_disavowed_urls = []
+	for url in urls:
+		if (url in disavow_links) or (sub_plus_registered_domain(url) in sub_plus_reg_from_list(disavow_domains)):
+			disavowed_urls.append(url)
+		else:
+			non_disavowed_urls.append(url)
+
+	return {'disavowed': disavowed_urls, 'non_disavowed': non_disavowed_urls}
