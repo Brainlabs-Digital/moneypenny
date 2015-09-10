@@ -62,6 +62,10 @@ def import_file_contents(file_contents):
             if lineraw.startswith('"') and lineraw.endswith('"'):
                 lineraw = lineraw[1:-1]
 
+            if lineraw[0] == '#':
+                # comment entry
+                continue
+
             if lineraw[:7] == "domain:":
                 # domain entry
 

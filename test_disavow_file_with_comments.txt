@@ -1,0 +1,3 @@
+# super spammy domain
+domain:www.spam.com
+www.spam.com
