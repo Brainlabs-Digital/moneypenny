@@ -1,5 +1,5 @@
 from helper import dedupe
-from clean_urls import clean_and_strip
+from clean_urls import clean_and_strip, clean_and_strip_singular
 from parse_urls import sub_plus_registered_domain
 from import_helpers import *
 
@@ -76,3 +76,68 @@ def disavow_both_ways(disavow_file, list_of_urls):
 			non_disavowed_urls.append(url)
 
 	return {'disavowed': disavowed_urls, 'non_disavowed': non_disavowed_urls}
+
+
+def disavow_to_comments(disavow_file, domain_limit=False):
+	extract = extract_file_contents(disavow_file)
+	entries_dict = import_file_contents(extract)
+	link_entries = clean_and_strip(entries_dict['urls'])
+	links_entered = len(entries_dict['urls'])
+	unique_links_entered = len(link_entries)
+	domain_entries = entries_dict['domains']
+	domains_entered = len(domain_entries)
+	if domain_entries:
+		link_entries = disavow_from_existing_domains(**entries_dict)
+	new_domain_entries = []
+	if domain_limit:
+		link_entries, new_domain_entries = apply_domain_limit(link_entries, domain_limit)
+	domain_entries = sub_plus_reg_from_list(domain_entries)
+	new_domain_entries = sub_plus_reg_from_list(new_domain_entries)
+	total_domains_disavowed = len(domain_entries + new_domain_entries)
+	links_disavowed = len(link_entries)
+	return {'old_domains': domain_entries, 'new_domains': new_domain_entries,
+			'links_entered': links_entered, 'unique_links_entered': unique_links_entered,
+			'domains_entered': domains_entered, 
+			'total_domains_disavowed': total_domains_disavowed, 'links_disavowed': links_disavowed}
+
+
+def combine_with_original_disavow(disavow_file, **domains):
+	output = []
+	extract = extract_file_contents(disavow_file)
+	file_contents = extract.splitlines()
+	already_converted_to_domain = []
+	for lineraw in file_contents:
+
+		if (not lineraw.isspace()) and (lineraw != ""):
+
+			if lineraw.startswith('"') and lineraw.endswith('"'):
+				lineraw = lineraw[1:-1]
+
+			if lineraw[0] == '#':
+				# line is a comment 
+				output.append(lineraw)
+				continue
+
+			if lineraw[:7] == 'domain:':
+				# line is an existing domain entry
+				output.append('domain:' + sub_plus_registered_domain(clean_and_strip_singular(lineraw[7:])))
+				continue
+
+			else:
+				line = sub_plus_registered_domain(clean_and_strip_singular(lineraw))
+				
+				if line in domains['new_domains']:
+					
+					if line not in already_converted_to_domain:
+						already_converted_to_domain.append(line)
+						output.append('domain:' + clean_and_strip_singular(lineraw))
+
+					else:
+						output.append('# link now disavowed via domain entry')
+				
+				elif line in domains['old_domains']:
+					output.append('# link now disavowed via domain entry')
+				
+				else:
+					output.append(clean_and_strip_singular(lineraw))
+	return output

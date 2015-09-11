@@ -2,6 +2,7 @@ import re
 from parse_urls import sub_plus_registered_domain
 from clean_urls import clean_and_strip
 
+
 def import_urls_from_text_file(filename, skip_header_row=False):
     """Handles the import from a text file where each entry is on a new line.  Outputs a list"""
     urls = []

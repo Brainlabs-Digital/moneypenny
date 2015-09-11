@@ -1,3 +1,14 @@
 # super spammy domain
 domain:www.spam.com
 www.spam.com
+# I like beef
+www.beef.com
+beef.com
+domain:beef.com
+www.rasool.com
+www.rasool.com/a/
+# random link incoming
+chicken.it
+www.rasool.com/b/
+# random comment
+www.rasool.com/c/
