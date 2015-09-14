@@ -120,7 +120,8 @@ def combine_with_original_disavow(disavow_file, **domains):
 
 			if lineraw[:7] == 'domain:':
 				# line is an existing domain entry
-				output.append('domain:' + sub_plus_registered_domain(clean_and_strip_singular(lineraw[7:])))
+				print lineraw
+				output.append('domain:' + clean_and_strip_singular(lineraw[7:]))
 				continue
 
 			else:

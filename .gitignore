@@ -2,4 +2,5 @@
 *.pyc
 moneypenny.sublime-project
 moneypenny.sublime-workspace
+*.ipynb
 
