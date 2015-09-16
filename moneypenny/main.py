@@ -52,6 +52,8 @@ def apply_domain_limit(entries, domain_limit):
 
 
 def disavow_from_existing_domains(**entries_dict):
+	"""Takes a dictionary with 'urls' and 'domains' entries, and returns a list of URLs not covered 
+	by an existing 'domain:' entry"""
 	urls = clean_and_strip(entries_dict['urls'])
 	domains = sub_plus_reg_from_list(entries_dict['domains'])
 	new_url_set = set()
@@ -62,6 +64,7 @@ def disavow_from_existing_domains(**entries_dict):
 
 
 def disavow_both_ways(disavow_file, list_of_urls):
+	"""Using a disavow file, tests which of a list of urls would be disavowed and which wouldn't"""
 	open_file = extract_file_contents(disavow_file)
 	disavow_entries = import_file_contents(open_file)
 	disavow_links = clean_and_strip(disavow_entries['urls'])
@@ -78,7 +81,9 @@ def disavow_both_ways(disavow_file, list_of_urls):
 	return {'disavowed': disavowed_urls, 'non_disavowed': non_disavowed_urls}
 
 
-def disavow_to_comments(disavow_file, domain_limit=False):
+def disavow_file_to_dict(disavow_file, domain_limit=False):
+	"""Takes a disavow file and applies many helper functions, outputting a dictionary with old and new domain entries,
+	the individual links to be disavowed, as well as useful counts"""
 	extract = extract_file_contents(disavow_file)
 	entries_dict = import_file_contents(extract)
 	link_entries = clean_and_strip(entries_dict['urls'])
@@ -102,6 +107,9 @@ def disavow_to_comments(disavow_file, domain_limit=False):
 
 
 def combine_with_original_disavow(disavow_file, **domains):
+	"""Takes the disavow file passed to disavow_file_to_dict() and it's resulting output and combines them
+	to create a .txt file with the relevant 'domain:' entries and individual links to be disavowed, while
+	maintaining the order and the comments from the original document"""
 	output = []
 	extract = extract_file_contents(disavow_file)
 	file_contents = extract.splitlines()
@@ -120,8 +128,7 @@ def combine_with_original_disavow(disavow_file, **domains):
 
 			if lineraw[:7] == 'domain:':
 				# line is an existing domain entry
-				print lineraw
-				output.append('domain:' + clean_and_strip_singular(lineraw[7:]))
+				output.append('domain:' + sub_plus_registered_domain(clean_and_strip_singular(lineraw[7:])))
 				continue
 
 			else:

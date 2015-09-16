@@ -1,6 +1,9 @@
+www.filthland.com
 # super spammy domain
 domain:www.spam.com
 www.spam.com
+http://www.spam.com
+http://www.spam.com/
 # I like beef
 www.beef.com
 beef.com
@@ -8,6 +11,10 @@ domain:beef.com
 www.rasool.com
 www.rasool.com/a/
 # random link incoming
+# another comment
+# and another
+# chicken.it
+# http://filth.com
 chicken.it
 www.rasool.com/b/
 # random comment

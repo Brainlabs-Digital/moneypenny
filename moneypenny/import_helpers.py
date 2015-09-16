@@ -31,6 +31,7 @@ def import_urls_from_text_file(filename, skip_header_row=False):
     return urls
 
 def extract_file_contents(filename):
+    """The first step in importing, takes a file and converts to a string"""
     # We don't use readlines() as we need to clean the files potentially.
     # (Sometimes certain link tools output files that we can't seem to decode without doing the manual cleaning
     # that follows - but it is is somewhat dirty/hacky.)
@@ -50,6 +51,8 @@ def extract_file_contents(filename):
 
 
 def import_file_contents(file_contents):
+    """Takes a string, such as that from extract_file_contents(), splits on new lines, and returns
+    a dictionary of 'domain:' entries, and standalone URL entries.  Handles comments by ignoring them."""
     urls = set()
     domains = set()
     entries = {}
