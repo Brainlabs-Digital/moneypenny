@@ -1,4 +1,8 @@
 www.filthland.com
+點看.com
+http://www.filthland.com/
+http;//www.filthland.com/
+domain:http;//www.filthland.com/
 # super spammy domain
 domain:www.spam.com
 www.spam.com
@@ -7,6 +11,8 @@ http://www.spam.com/
 # I like beef
 www.beef.com
 beef.com
+www.beef.com
+http://www.beef.com
 domain:beef.com
 www.rasool.com
 www.rasool.com/a/
@@ -15,6 +21,7 @@ www.rasool.com/a/
 # and another
 # chicken.it
 # http://filth.com
+domain:beef.com
 chicken.it
 www.rasool.com/b/
 # random comment

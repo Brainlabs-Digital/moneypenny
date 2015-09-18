@@ -3,12 +3,14 @@ http://foo.com/a/b/c/
 http://foo.com/foo/a/d/
 http://foo.com/?do=1&not=2&want=3&this=4
 http://foo.com/?do=1&want=3&not=2&this=4
+www.placeholder.co.uk
 http://store.foo.com/#foo
 foo.com/#bar
 http://www.FOO.com/bar?utm_source=foo#what
 http://www.TA.com/BUFFOOON#frother
 http://buffoon.ta.com
 buffoon.ta.com/a/b/d
+shouldbeunaffected.com
 https://buffoon.ta.com/?1=do&2=foo
 domain:www.rasool.co
 domain:www.duncan.com/a/b/c/d/?test=true
@@ -18,3 +20,7 @@ http://www.austin.co.uk
 http://austin.co.uk
 www.rasool.co
 www.rasool.co/#python
+www.shouldstillbeunaffected.com
+domain:disavowalltotheleft.com
+www.disavowalltotheleft.com
+store.disavowalltotheleft.com

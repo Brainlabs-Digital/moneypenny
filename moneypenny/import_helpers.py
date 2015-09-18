@@ -1,6 +1,6 @@
 import re
-from parse_urls import sub_plus_registered_domain
-from clean_urls import clean_and_strip
+from parse_urls import sub_plus_registered_domain, sub_plus_reg_from_list
+from clean_urls import clean_and_strip, clean_and_strip_singular
 
 
 def import_urls_from_text_file(filename, skip_header_row=False):
@@ -70,27 +70,39 @@ def import_file_contents(file_contents):
                 # comment entry
                 continue
 
-            if lineraw[:7] == "domain:":
-                # domain entry
+            # checking if url is valid 
+            if not clean_and_strip_singular(lineraw): #or clean_and_strip_singular(lineraw[7:]):
+                continue
+                
+            else: 
 
-                line = re.sub("\n", "", lineraw[7:])
+                if lineraw[:7] == "domain:":
+                    # domain entry
 
-                if line.startswith('"') and line.endswith('"'):
-                    line = line[1:-1]
+                    line = re.sub("\n", "", lineraw[7:])
 
-                # We run the domain extract here, as sometimes people accidentally
-                # put full URLs in domain entries. We assume they mean to exclude
-                # the domain (which is often now recommended anyway - "no good
-                # links from bad domains").
+                    # checking if domain url is valid
+                    if not clean_and_strip_singular(line):
+                        continue
 
-                domain = sub_plus_registered_domain(line)
-                domains.add(domain)
+                    else:
+                        if line.startswith('"') and line.endswith('"'):
+                            line = line[1:-1]
 
-            else:
-            #not a domain entry
-                line = re.sub("\n", "", lineraw)
-                urls.add(line)
+                        # We run the domain extract here, as sometimes people accidentally
+                        # put full URLs in domain entries. We assume they mean to exclude
+                        # the domain (which is often now recommended anyway - "no good
+                        # links from bad domains").
+
+                        domain = sub_plus_registered_domain(line)
+                        domains.add(domain)
+
+                else:
+                #not a domain entry
+                    line = re.sub("\n", "", lineraw)
+                    urls.add(line)
 
     entries['urls'] = (list(urls))
-    entries['domains'] = clean_and_strip(list(domains))
+    entries['domains'] = sub_plus_reg_from_list(clean_and_strip(list(domains)))
+    print len(entries['urls'])
     return entries

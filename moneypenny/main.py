@@ -1,18 +1,7 @@
 from helper import dedupe
 from clean_urls import clean_and_strip, clean_and_strip_singular
-from parse_urls import sub_plus_registered_domain
+from parse_urls import sub_plus_registered_domain, registered_domain, sub_plus_reg_from_list
 from import_helpers import *
-
-
-def sub_plus_reg_from_list(urls, dupes=True):
-	"""Takes a list of sanitised URLs and returns a list of the subdomain plus registered domain
-	of all entries.  For example, www.foo.com from http://www.foo.com."""
-	domains = []
-	for url in urls:
-		domains.append(sub_plus_registered_domain(url))
-	if not dupes:
-		return dedupe(domains)
-	return domains
 
 
 def cleaning_urls_with_counts(dirty_urls):
@@ -45,7 +34,8 @@ def apply_domain_limit(entries, domain_limit):
 			exceeded_domains.add(url)
 	
 	for entry in entries:
-		if sub_plus_registered_domain(entry) not in exceeded_domains:
+		if sub_plus_registered_domain(entry) not in exceeded_domains \
+		and registered_domain(entry) not in exceeded_domains:
 			new_url_set.add(entry)
 
 	return (list(new_url_set), list(exceeded_domains))
@@ -58,7 +48,7 @@ def disavow_from_existing_domains(**entries_dict):
 	domains = sub_plus_reg_from_list(entries_dict['domains'])
 	new_url_set = set()
 	for url in urls:
-		if sub_plus_registered_domain(url) not in domains:
+		if registered_domain(url) not in domains:
 			new_url_set.add(url)
 	return list(new_url_set)
 
@@ -81,6 +71,18 @@ def disavow_both_ways(disavow_file, list_of_urls):
 	return {'disavowed': disavowed_urls, 'non_disavowed': non_disavowed_urls}
 
 
+def remove_redundant_domains(old_domains, new_domains):
+	non_redundant_old_domains = set()
+	non_redundant_new_domains = set()
+	for old_domain in old_domains:
+		if registered_domain(old_domain) not in new_domains:
+			non_redundant_old_domains.add(old_domain)
+	for new_domain in new_domains:
+		if new_domain not in old_domains:
+			non_redundant_new_domains.add(new_domain)
+	return (list(non_redundant_old_domains), list(non_redundant_new_domains)) 
+
+
 def disavow_file_to_dict(disavow_file, domain_limit=False):
 	"""Takes a disavow file and applies many helper functions, outputting a dictionary with old and new domain entries,
 	the individual links to be disavowed, as well as useful counts"""
@@ -93,16 +95,17 @@ def disavow_file_to_dict(disavow_file, domain_limit=False):
 	domains_entered = len(domain_entries)
 	if domain_entries:
 		link_entries = disavow_from_existing_domains(**entries_dict)
+		print link_entries
 	new_domain_entries = []
 	if domain_limit:
 		link_entries, new_domain_entries = apply_domain_limit(link_entries, domain_limit)
-	domain_entries = sub_plus_reg_from_list(domain_entries)
-	new_domain_entries = sub_plus_reg_from_list(new_domain_entries)
+	if domain_entries and domain_limit:
+		domain_entries, new_domain_entries = remove_redundant_domains(domain_entries, new_domain_entries)
 	total_domains_disavowed = len(domain_entries + new_domain_entries)
 	links_disavowed = len(link_entries)
 	return {'old_domains': domain_entries, 'new_domains': new_domain_entries,
 			'links_entered': links_entered, 'unique_links_entered': unique_links_entered,
-			'domains_entered': domains_entered, 
+			'domains_entered': domains_entered, 'link_entries': link_entries,
 			'total_domains_disavowed': total_domains_disavowed, 'links_disavowed': links_disavowed}
 
 
@@ -128,7 +131,24 @@ def combine_with_original_disavow(disavow_file, **domains):
 
 			if lineraw[:7] == 'domain:':
 				# line is an existing domain entry
-				output.append('domain:' + sub_plus_registered_domain(clean_and_strip_singular(lineraw[7:])))
+
+				# check if it is valid, if not then include it is a comment
+				if not clean_and_strip_singular(lineraw[7:]):
+					output.append('# invalid entry - ' + lineraw)
+					continue
+				
+				else:
+					clean_domain = sub_plus_registered_domain(clean_and_strip_singular(lineraw[7:]))
+					if clean_domain in domains['old_domains']:
+						if 'domain:'+clean_domain not in output:
+							output.append('domain:' + clean_domain)
+						else:
+							output.append('# domain entry already present')
+					continue
+
+			# check if link entry is valid
+			if not clean_and_strip_singular(lineraw):
+				output.append('# invalid entry - ' + lineraw)
 				continue
 
 			else:
@@ -138,14 +158,20 @@ def combine_with_original_disavow(disavow_file, **domains):
 					
 					if line not in already_converted_to_domain:
 						already_converted_to_domain.append(line)
-						output.append('domain:' + clean_and_strip_singular(lineraw))
+						output.append('domain:' + line)
 
 					else:
-						output.append('# link now disavowed via domain entry')
+						output.append('# link now disavowed via new domain entry')
 				
 				elif line in domains['old_domains']:
-					output.append('# link now disavowed via domain entry')
+					output.append('# link now disavowed via old domain entry')
 				
+				elif clean_and_strip_singular(lineraw) in domains['link_entries']:
+					if clean_and_strip_singular(lineraw) not in output:
+						output.append(clean_and_strip_singular(lineraw))
+					else:
+						output.append('# link entry already present')
+
 				else:
-					output.append(clean_and_strip_singular(lineraw))
+					output.append('# link now disavowed via superset domain')
 	return output
