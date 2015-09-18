@@ -9,7 +9,7 @@ def clean_and_strip_singular(url):
 	url = url.lower()
 	url_parts = urlparse(url)
 	if url_parts.netloc:
-		url_obj = parse(url).defrag().abspath().canonical()
+		url_obj = parse(url).defrag().abspath().canonical().punycode()
 		return url_obj.utf8()
 
 

@@ -83,19 +83,19 @@ def remove_redundant_domains(old_domains, new_domains):
 	return (list(non_redundant_old_domains), list(non_redundant_new_domains)) 
 
 
-def disavow_file_to_dict(disavow_file, domain_limit=False):
+def disavow_file_to_dict(file_contents, domain_limit=False):
 	"""Takes a disavow file and applies many helper functions, outputting a dictionary with old and new domain entries,
 	the individual links to be disavowed, as well as useful counts"""
-	extract = extract_file_contents(disavow_file)
-	entries_dict = import_file_contents(extract)
+	# extract = extract_file_contents(disavow_file)
+	entries_dict = import_file_contents(file_contents)
 	link_entries = clean_and_strip(entries_dict['urls'])
 	links_entered = len(entries_dict['urls'])
 	unique_links_entered = len(link_entries)
-	domain_entries = entries_dict['domains']
-	domains_entered = len(domain_entries)
+	domain_entries = sub_plus_reg_from_list(clean_and_strip(entries_dict['domains']))
+	domains_entered = len(entries_dict['domains'])
+	unique_domains_entered = len(domain_entries)
 	if domain_entries:
 		link_entries = disavow_from_existing_domains(**entries_dict)
-		print link_entries
 	new_domain_entries = []
 	if domain_limit:
 		link_entries, new_domain_entries = apply_domain_limit(link_entries, domain_limit)
@@ -106,16 +106,17 @@ def disavow_file_to_dict(disavow_file, domain_limit=False):
 	return {'old_domains': domain_entries, 'new_domains': new_domain_entries,
 			'links_entered': links_entered, 'unique_links_entered': unique_links_entered,
 			'domains_entered': domains_entered, 'link_entries': link_entries,
+			'unique_domains_entered': unique_domains_entered,
 			'total_domains_disavowed': total_domains_disavowed, 'links_disavowed': links_disavowed}
 
 
-def combine_with_original_disavow(disavow_file, **domains):
+def combine_with_original_disavow(file_contents, **domains):
 	"""Takes the disavow file passed to disavow_file_to_dict() and it's resulting output and combines them
 	to create a .txt file with the relevant 'domain:' entries and individual links to be disavowed, while
 	maintaining the order and the comments from the original document"""
 	output = []
-	extract = extract_file_contents(disavow_file)
-	file_contents = extract.splitlines()
+	# extract = extract_file_contents(disavow_file)
+	file_contents = file_contents.splitlines()
 	already_converted_to_domain = []
 	for lineraw in file_contents:
 

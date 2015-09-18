@@ -53,9 +53,8 @@ def extract_file_contents(filename):
 def import_file_contents(file_contents):
     """Takes a string, such as that from extract_file_contents(), splits on new lines, and returns
     a dictionary of 'domain:' entries, and standalone URL entries.  Handles comments by ignoring them."""
-    urls = set()
-    domains = set()
-    entries = {}
+    urls = []
+    domains = []
 
     # file_contents = file_contents.split("\n")
     file_contents = file_contents.splitlines()
@@ -71,9 +70,9 @@ def import_file_contents(file_contents):
                 continue
 
             # checking if url is valid 
-            if not clean_and_strip_singular(lineraw): #or clean_and_strip_singular(lineraw[7:]):
+            if not clean_and_strip_singular(lineraw):
                 continue
-                
+
             else: 
 
                 if lineraw[:7] == "domain:":
@@ -95,14 +94,11 @@ def import_file_contents(file_contents):
                         # links from bad domains").
 
                         domain = sub_plus_registered_domain(line)
-                        domains.add(domain)
+                        domains.append(domain)
 
                 else:
                 #not a domain entry
                     line = re.sub("\n", "", lineraw)
-                    urls.add(line)
+                    urls.append(line)
 
-    entries['urls'] = (list(urls))
-    entries['domains'] = sub_plus_reg_from_list(clean_and_strip(list(domains)))
-    print len(entries['urls'])
-    return entries
+    return {'urls': urls, 'domains': domains}
