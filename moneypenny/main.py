@@ -53,17 +53,20 @@ def disavow_from_existing_domains(**entries_dict):
 	return list(new_url_set)
 
 
-def disavow_both_ways(disavow_file, list_of_urls):
+def disavow_both_ways(disavow_file, urls_to_test_file):
 	"""Using a disavow file, tests which of a list of urls would be disavowed and which wouldn't"""
 	open_file = extract_file_contents(disavow_file)
 	disavow_entries = import_file_contents(open_file)
 	disavow_links = clean_and_strip(disavow_entries['urls'])
-	disavow_domains = disavow_entries['domains']
-	urls = clean_and_strip(list_of_urls)
+	disavow_domains = sub_plus_reg_from_list(clean_and_strip(disavow_entries['domains']))
+	urls_file = extract_file_contents(urls_to_test_file)
+	urls_to_test = import_file_contents(urls_file)
+	urls = clean_and_strip(urls_to_test['urls'])
+	print disavow_links, disavow_domains, urls
 	disavowed_urls = []
 	non_disavowed_urls = []
 	for url in urls:
-		if (url in disavow_links) or (sub_plus_registered_domain(url) in sub_plus_reg_from_list(disavow_domains)):
+		if (url in disavow_links) or (sub_plus_registered_domain(url) in disavow_domains):
 			disavowed_urls.append(url)
 		else:
 			non_disavowed_urls.append(url)
