@@ -10,3 +10,10 @@ http://www.TA.com/BUFFOOON#frother
 http://buffoon.ta.com
 https://buffoon.ta.com/a/b/d
 https://buffoon.ta.com/?1=do&2=foo
+www.beef.com
+beef.com/a/b/c/
+http://beef.com
+http;//spam.com
+www.spam.com
+store.spam.com/
+http://spam.com

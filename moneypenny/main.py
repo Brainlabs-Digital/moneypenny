@@ -54,15 +54,20 @@ def disavow_from_existing_domains(**entries_dict):
 
 
 def disavow_both_ways(disavow_file, urls_to_test_file):
-	"""Using a disavow file, tests which of a list of urls would be disavowed and which wouldn't"""
+	"""Using a disavow file, tests which of a file of urls would be disavowed and which wouldn't"""
 	open_file = extract_file_contents(disavow_file)
 	disavow_entries = import_file_contents(open_file)
+	disavow_domains_entered = len(disavow_entries['domains'])
+	disavow_links_entered = len(disavow_entries['urls'])
 	disavow_links = clean_and_strip(disavow_entries['urls'])
 	disavow_domains = sub_plus_reg_from_list(clean_and_strip(disavow_entries['domains']))
+	unique_disavow_domains_entered = len(disavow_domains)
+	unique_disavow_links_entered = len(disavow_links)
 	urls_file = extract_file_contents(urls_to_test_file)
 	urls_to_test = import_file_contents(urls_file)
+	urls_entered_to_test = len(urls_to_test['urls'])
 	urls = clean_and_strip(urls_to_test['urls'])
-	print disavow_links, disavow_domains, urls
+	unique_urls_entered_to_test = len(urls)
 	disavowed_urls = []
 	non_disavowed_urls = []
 	for url in urls:
@@ -71,7 +76,15 @@ def disavow_both_ways(disavow_file, urls_to_test_file):
 		else:
 			non_disavowed_urls.append(url)
 
-	return {'disavowed': disavowed_urls, 'non_disavowed': non_disavowed_urls}
+	total_disavowed_links = len(disavowed_urls)
+	total_remaining_links = len(non_disavowed_urls)
+
+	return {'disavowed': disavowed_urls, 'non_disavowed': non_disavowed_urls,
+			'domains_entered': disavow_domains_entered, 'unique_domains_entered': unique_disavow_domains_entered,
+			'disavow_links_entered': disavow_links_entered, 'unique_disavow_links_entered': unique_disavow_links_entered,
+			'urls_entered_to_test': urls_entered_to_test, 'unique_urls_entered_to_test': unique_urls_entered_to_test,
+			'total_disavowed_links': total_disavowed_links, 'total_remaining_links': total_remaining_links
+	}
 
 
 def remove_redundant_domains(old_domains, new_domains):
