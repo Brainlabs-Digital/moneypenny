@@ -1,0 +1,7 @@
+.venv
+*.pyc
+moneypenny.sublime-project
+moneypenny.sublime-workspace
+*.ipynb
+*.csv
+test_counts.py
