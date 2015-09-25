@@ -4,17 +4,13 @@ Moneypenny is a library for normalising and handling lists of URLs. It was origi
 
 For example, you may have a file containing a list of URLs or a mix of URLs and 'domain:' entries (i.e. a disavow file), but having been aggregated from various sources you may want to remove duplicates and superfluous entries:
 
-First convert it to a string using:
+First convert it to a string and parse out the URL and 'domain:' entries using:
 
-	extract_file_contents()
-
-Then parse out the URL entries and the domain entries using:
-
-	import_file_contents()
+	import_from_file()
 
 Then call:
 
-	clean_and_strip() 
+	normalize_and_dedupe() 
 
 On the 'urls' or 'domains' list output as you see fit.
 
@@ -46,18 +42,20 @@ For example,
 a single 'domain:www.example.com' entry.
 
 The output gives some summary statistics to do with the number of links/domains entered/disavowed along
-with the 'new_domains' - which result from applying a domain limit, 'old_domains' - the domains from the original
-disavow file, and 'link_entries' - the individual links to be disavowed.
+with 'domain_entries' - which contain the new domains from applying a domain limit and the domains from the 
+original disavow file, and 'link_entries' - the individual links to be disavowed.
 
-To modify your existing file, pass your original file, and this dictionary to:
+To modify your existing file, pass your original file to extract_file_contents(), and use this as 
+the first parameter to:
 
 	combine_with_original_disavow()
 
-This will maintain the order (and comments) of your original disavow file.
+With the dictionary output of disavow_file_to_dict() as the second parameter.  This function will 
+maintain the order (and comments) of your original disavow file.
 
 For testing an existing disavow file against a file containing a list of URLs, simply call:
 
-	disavow_both_ways()
+	apply_disavow_files()
 
 With your disavow file as the first parameter, and your URLs file to test as the second.  The output is a dictionary, 
 the most relevant keys of which are 'disavowed' and 'non_disavowed'; the rest are statistics summarising the input files
