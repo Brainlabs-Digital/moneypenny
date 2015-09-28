@@ -46,7 +46,7 @@ def apply_disavow_files(disavow_file, urls_to_test_file):
     """
 
     disavow_entries = import_from_file(disavow_file)
-    urls_list = import_from_file(urls_to_test_file['urls'])
+    urls_list = import_from_file(urls_to_test_file)['urls']
 
     return apply_disavow(disavow_entries, urls_list)
 
@@ -175,7 +175,7 @@ def disavow_file_to_dict(file_contents, domain_limit=False):
     }
 
 
-def combine_with_original_disavow(file_contents, disavow_entries):
+def combine_with_original_disavow(file_contents, **disavow_entries):
     """ Takes the disavow file passed to disavow_file_to_dict() and it's
         resulting output and combines them to create a .txt file with the
         relevant 'domain:' entries and individual links to be disavowed,
