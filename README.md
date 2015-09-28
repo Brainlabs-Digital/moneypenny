@@ -6,11 +6,11 @@ For example, you may have a file containing a list of URLs or a mix of URLs and 
 
 First convert it to a string and parse out the URL and 'domain:' entries using:
 
-	import_from_file()
+	import_from_file('<your_filename>.txt')
 
 Then call:
 
-	normalize_and_dedupe() 
+	normalize_and_dedupe(<import_from_file_output>) 
 
 On the 'urls' or 'domains' list output as you see fit.
 
@@ -28,11 +28,11 @@ To create / modify an existing disavow file,
 
 First call:	
 	
-	extract_file_contents()
+	extract_file_contents('<your_filename>.txt')
 
 To convert your file to a string, then pass that to:
 
-	disavow_file_to_dict()
+	disavow_file_to_dict(<extract_file_contents_output>)
 
 With an optional argument for domain_limit, in case you want to disavow all links originating from a 
 certain domain that exceeds your limit.
@@ -48,14 +48,16 @@ original disavow file, and 'link_entries' - the individual links to be disavowed
 To modify your existing file, pass your original file to extract_file_contents(), and use this as 
 the first parameter to:
 
-	combine_with_original_disavow()
+	combine_with_original_disavow('<your_filename>.txt', 
+	<disavow_file_to_dict_output>)
 
 With the dictionary output of disavow_file_to_dict() as the second parameter.  This function will 
 maintain the order (and comments) of your original disavow file.
 
 For testing an existing disavow file against a file containing a list of URLs, simply call:
 
-	apply_disavow_files()
+	apply_disavow_files(<your_disavow_filename>.txt,
+		<your_urls_to_test_filename>.txt)
 
 With your disavow file as the first parameter, and your URLs file to test as the second.  The output is a dictionary, 
 the most relevant keys of which are 'disavowed' and 'non_disavowed'; the rest are statistics summarising the input files

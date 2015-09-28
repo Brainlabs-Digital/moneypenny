@@ -42,7 +42,7 @@ def apply_domain_limit(entries, domain_limit):
 
 
 def apply_disavow_files(disavow_file, urls_to_test_file):
-    """ NBED
+    """ Reads and parses input files, and passes them to apply_disavow().
     """
 
     disavow_entries = import_from_file(disavow_file)
@@ -316,6 +316,9 @@ def import_from_file_contents(file_contents):
 
 
 def import_from_file(filename):
+    """ Combines the functionality of reading then parsing input files into
+    one handy function.
+    """
 
     file_contents = extract_file_contents(filename)
     return import_from_file_contents(file_contents)
